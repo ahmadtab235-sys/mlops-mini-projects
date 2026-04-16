@@ -1,0 +1,112 @@
+schema: '2.0'
+stages:
+  data_ingestion:
+    cmd: python src/data/data_ingestion.py
+    deps:
+    - path: C:/Users/TABISH AHMAD/Documents/DataSets/tweet_emotions.csv
+      hash: md5
+      md5: 378e50a49c97277f1841a684687c2020
+      size: 3768210
+    - path: src/data/data_ingestion.py
+      hash: md5
+      md5: 5c9255dcf9171fb8da122694ba86cdbc
+      size: 2333
+    params:
+      params.yaml:
+        data_ingestion.test_size: 0.2
+    outs:
+    - path: data/raw/test.csv
+      hash: md5
+      md5: 35b06980c6e00772e6bf783ae10ab9b7
+      size: 164174
+    - path: data/raw/train.csv
+      hash: md5
+      md5: a2aa88dfae8af3dc60e6e24a09304f4e
+      size: 663799
+  data_preprocessing:
+    cmd: python src/data/data_preprocessing.py
+    deps:
+    - path: data/raw/test.csv
+      hash: md5
+      md5: 35b06980c6e00772e6bf783ae10ab9b7
+      size: 164174
+    - path: data/raw/train.csv
+      hash: md5
+      md5: a2aa88dfae8af3dc60e6e24a09304f4e
+      size: 663799
+    - path: src/data/data_preprocessing.py
+      hash: md5
+      md5: 833d3fd995f81e573b0f89ac3f4cbf53
+      size: 4027
+    outs:
+    - path: data/processed/test_processed.csv
+      hash: md5
+      md5: 50a19607276fd7ca3a6143cff1a01401
+      size: 107195
+    - path: data/processed/train_processed.csv
+      hash: md5
+      md5: 6c25fb263745e87910a83a8f3954c1fb
+      size: 430754
+  feature_engineering:
+    cmd: python src/features/feature_engineering.py
+    deps:
+    - path: data/processed/test_processed.csv
+      hash: md5
+      md5: 50a19607276fd7ca3a6143cff1a01401
+      size: 107195
+    - path: data/processed/train_processed.csv
+      hash: md5
+      md5: 6c25fb263745e87910a83a8f3954c1fb
+      size: 430754
+    - path: src/features/feature_engineering.py
+      hash: md5
+      md5: bb62d1592740dd263c784d1fd0992fa9
+      size: 3251
+    params:
+      params.yaml:
+        feature_engineering.max_features: 50
+    outs:
+    - path: data/interim/test_tfidf.csv
+      hash: md5
+      md5: 43bee964d5a7b665b355cd3ea70bd690
+      size: 463605
+    - path: data/interim/train_tfidf.csv
+      hash: md5
+      md5: db1e29e608ca4c45f459f1aa7f0de99e
+      size: 1853046
+  model_building:
+    cmd: python src/model/model_building.py
+    deps:
+    - path: data/interim/train_tfidf.csv
+      hash: md5
+      md5: db1e29e608ca4c45f459f1aa7f0de99e
+      size: 1853046
+    - path: src/model/model_building.py
+      hash: md5
+      md5: e998315bafda4f8ac10bcca308bc099f
+      size: 2254
+    outs:
+    - path: model/model.pkl
+      hash: md5
+      md5: c2dab707de9257cc51df4a6bda527f8a
+      size: 1055
+  model_evaluation:
+    cmd: python src/model/model_evaluation.py
+    deps:
+    - path: data/interim/test_tfidf.csv
+      hash: md5
+      md5: 43bee964d5a7b665b355cd3ea70bd690
+      size: 463605
+    - path: model/model.pkl
+      hash: md5
+      md5: c2dab707de9257cc51df4a6bda527f8a
+      size: 1055
+    - path: src/model/model_evaluation.py
+      hash: md5
+      md5: 61f1c6d23af2b18e3ad675a5dc262b1a
+      size: 3622
+    outs:
+    - path: reports/metrics.json
+      hash: md5
+      md5: 13d50ab842fd4830cc3f43af8a83ea61
+      size: 145
